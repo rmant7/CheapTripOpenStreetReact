@@ -27,6 +27,8 @@ function App({ loading, setLoading }) {
   const [options, setOptions] = useState();
   const [searchMarker, setSearchMarker] = useState(null);
 
+  const [myjson, setMyJson] = useState(null);
+
   const airports = airportsData.filter((airport) => {
     if (data.cities.find((city) => airport.city === city.city)) {
       return true;
@@ -34,6 +36,7 @@ function App({ loading, setLoading }) {
       return false;
     }
   });
+   
 
   const findCities = async (cityName) => {
     const url = `https://nominatim.openstreetmap.org/search?city=${cityName}&format=geojson`;
@@ -44,11 +47,37 @@ function App({ loading, setLoading }) {
         // console.log(data.features[0].properties);
       });
   };
+
+  const findMyCities = (city)=>{
+    
+    let lat1 = city.geometry.coordinates[1];
+    let lon1 = city.geometry.coordinates[0];
+    let distance= 20000;
+    let rescity ={}
+    let lat2,lon2,a,d;
+    let p = 0.017453292519943295;
+    let c = Math.cos;
+    data.cities.forEach(e => {
+      lat2 = e.lat;
+      lon2 = e.lon;   
+      a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2;
+      d = 12742 * Math.asin(Math.sqrt(a));
+      if (d<=distance) {
+        distance=d;
+        rescity={
+        geometry :{coordinates: [lon2,lat2]},
+        properties:{display_name: e.city}
+      }}
+    });
+    let midata=[
+      rescity]
+    setMyJson(midata)
+}
   const findAutocomplete = async (cityName) => {
     const url = `https://photon.komoot.io/api/?q=${cityName}&osm_tag=place:city`;
     const response = await fetch(url);
     let data = (await response.json()).features;
-    console.log(data);
+    //console.log("DATA",data);
     // data = data.map((feature) => feature.properties.name);
     // console.log(data);
     // setAutoCompleteData(data);
@@ -56,7 +85,8 @@ function App({ loading, setLoading }) {
   };
 
   const resultClick = (city) => {
-    console.log("clockde");
+    //console.log("clockde");
+    findMyCities(city);
     setSearchMarker({
       coordinates: {
         lat: city.geometry.coordinates[1],
@@ -81,7 +111,7 @@ function App({ loading, setLoading }) {
       matches = data.map((feature) => feature.properties.name);
       matches = matches.filter((a, b) => matches.indexOf(a) === b);
     }
-    console.log("matches", matches);
+    //console.log("matches", matches);
     setOptions(matches);
    
   };
@@ -165,6 +195,16 @@ function App({ loading, setLoading }) {
               checked={airportsActive}
               onChange={() => setAirportsActive(!airportsActive)}
             />
+          </div>
+          <div className="myresults">
+              {myjson &&
+            myjson.map((city) => (
+              <SearchResult
+                key={city.properties.display_name}
+                city={city}
+                resultClick={resultClick}
+              />
+            ))}
           </div>
         </div>
       </div>
