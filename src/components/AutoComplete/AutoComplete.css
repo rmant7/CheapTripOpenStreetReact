@@ -22,14 +22,33 @@
 }
 .autoComplete li{
   margin:0;
-  height:40px;
-  display:block;
+  height:auto;
+  display: block;
   border: 2px solid black;
   font-size:1.3rem;
   padding:5px;
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.item {
+margin: 0;
+}
+
+.itemCity{
+margin: 0;
+}
+
+.itemWrapCountry{
+  display: flex;
+}
+
+.itemCountry{
+margin: 3px 0 0 0;
+font-size: 0.8rem;
+color: rgba(0, 0, 0, 0.5);
+}
+
 .autoComplete li:hover{
   background-color:rgb(163, 155, 155);
 }
