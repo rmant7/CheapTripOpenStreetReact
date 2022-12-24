@@ -11,7 +11,7 @@
 
 .App .main{
   display:flex;
-  justify-content: space-between;
+  justify-content: center;
   padding-top: 30px;
 }
 
@@ -19,6 +19,12 @@
   width: 300px;
   border:2px solid black;
   height:600px;
+  overflow-y: scroll;
+}
+.App .myresults{
+  width: 300px;
+  border:2px solid black;
+  height:550px;
   overflow-y: scroll;
 }
 .App .temp{
